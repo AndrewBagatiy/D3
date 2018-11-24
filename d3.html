@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>D3</title>
+    <script type="application/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+  </head>
+  <body>
+    <script type="application/javascript">
+      d3.select('body').selectAll('p')
+        .data([16, 23, 42])
+        .enter()
+        .append('p')
+        .text(function(d, i) {
+    		console.log(this);
+    		console.log(i, "-", d);
+    		return (d + 2 * i);
+		});
+var p=d3.select('body').selectAll('p')
+	  	.data([45, 16, 87, 108]);
+	p.enter()
+     .append('p')
+	 .text(function(d) { return d; });
+	p.exit().remove();
+p = d3.select('body').selectAll('p')
+      .data([45, 16, 87, 108], function(d) { return d; });
+    </script>
+  </body>
+</html>
