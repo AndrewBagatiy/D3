@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Konva Framework Tests</title>
+	<script src="https://unpkg.com/konva@2.4.2/konva.min.js"></script>
+</head>
+<body>
+<div id="container">
+	<canvas width="1366" height="667" style="padding: 0px; margin: 0px; border: 0px; background: transparent; position: absolute; top: 0px; left: 0px; width: 1366px; height: 667px;"></canvas>
+</div>
+<script>
+    var width = window.innerWidth;
+    var height = window.innerHeight;
+    
+    var stage = new Konva.Stage({
+      container: 'container',
+      width: width,
+      height: height
+    });
+
+    var layer = new Konva.Layer();
+    // text
+    var text = new Konva.Text({
+    	x: 10,
+    	y: 10,
+    	fontFamily: 'Calibri',
+    	fontSize: 24,
+    	text: '',
+    	fill: 'black'
+    });
+    function writeMessage(message) {
+    	text.setText(message);
+    	layer.draw();
+    }
+    // triangle1
+ 	var triangle1 = new Konva.Shape({
+		drawFunc: function(context) {
+		context.beginPath();
+		context.moveTo(20, 50);
+		context.lineTo(220, 80);
+		context.quadraticCurveTo(150, 100, 260, 170);
+		context.closePath();
+		context.fillStrokeShape(this);
+		},
+		fill: '#00D2FF',
+		stroke: 'black',
+		strokeWidth: 4
+	});
+ 	// pentagon
+    var pentagon = new Konva.RegularPolygon({
+		x: 90,
+		y: 250,
+		sides: 5,
+		radius: 70,
+		fill: 'red',
+		stroke: 'black',
+		strokeWidth: 4,
+		shadowOffsetX : 20,
+		shadowOffsetY : 25,
+		shadowBlur : 60,
+		opacity : 0.7
+	});
+    // circle
+    var circle = new Konva.Circle({
+	    x: 300,
+	    y: 425,
+	    radius: 70,
+	    fill: 'red',
+	    stroke: 'black',
+	    strokeWidth: 4
+    });
+    circle.on('mouseover', function () {
+    	writeMessage('Mouseover circle');
+    });
+    circle.on('mouseout', function () {
+    	writeMessage('Mouseout circle');
+    });
+    circle.on('mousedown', function () {
+    	writeMessage('Mousedown circle');
+    });
+    circle.on('mouseup', function () {
+    	writeMessage('Mouseup circle');
+    });
+    // triangle
+    var triangle = new Konva.RegularPolygon({
+    	x: 90,
+    	y: 450,
+    	sides: 3,
+    	radius: 80,
+    	fill: '#00D2FF',
+    	stroke: 'black',
+    	strokeWidth: 4
+    });
+	triangle.on('mouseout', function () {
+    	writeMessage('Mouseout triangle');
+    });
+    triangle.on('mousemove', function () {
+    	var mousePos = stage.getPointerPosition();
+    	var x = mousePos.x;
+    	var y = mousePos.y-40;
+    	writeMessage('x: ' + x + ', y: ' + y);
+    });
+    // blue group bound x>=90
+    var blueGroup = new Konva.Group({
+        x: 300,
+        y: 100,
+        draggable: true,
+        dragBoundFunc: function(pos) {
+            var newX = pos.x < 90 ? 90 : pos.x;
+            return {
+                x: newX,
+                y: pos.y
+            };
+        }
+    });
+    var blueText = new Konva.Text({
+        fontSize: 26,
+        fontFamily: 'Calibri',
+        text: 'drag me',
+        fill: 'black',
+        padding: 10
+    });
+    var blueRect = new Konva.Rect({
+        width: blueText.getWidth(),
+        height: blueText.getHeight(),
+        fill: '#aaf',
+        stroke: 'black',
+        strokeWidth: 4
+    });
+	blueGroup.add(blueRect).add(blueText);
+	// rect
+	var rect = new Konva.Rect({
+        x: 400,
+        y: 200,
+        width: 100,
+        height: 50,
+        fill: 'green',
+        stroke: 'black',
+        strokeWidth: 2,
+        opacity: 0.2
+    });
+    //yellow rectangle
+    var yellowRect = new Konva.Rect({
+        x: 300,
+        y: 260,
+        width: 100,
+        height: 50,
+        fill: 'yellow',
+        stroke: 'black',
+        strokeWidth: 4,
+        offset: {
+            x: 50,
+            y: 25
+        }
+    });
+	//add to layer
+	layer.add(rect);
+	layer.add(yellowRect);
+    layer.add(text);
+	layer.add(triangle);
+    layer.add(pentagon);
+    layer.add(circle);
+ 	layer.add(triangle1);
+ 	layer.add(blueGroup);
+ 	// add layer to stage
+ 	stage.add(layer);
+ 	// tween rect
+    var tween = new Konva.Tween({
+        node: rect,
+        duration: 1,
+        x: 520,
+        y: 300,
+        fill : 'red',
+        rotation: Math.PI * 2,
+        opacity: 1,
+        strokeWidth: 6,
+        scaleX: 1.5
+    });
+    // yellow rect animation
+    var angularSpeed = 90;
+    var anim = new Konva.Animation(function(frame) {
+        var angleDiff = frame.timeDiff * angularSpeed / 1000;
+        yellowRect.rotate(angleDiff);
+    }, layer);
+    anim.start();
+    setTimeout(function() {
+        tween.play();
+    }, 2000);
+</script>
+</body>
+</html>
